@@ -12,7 +12,7 @@ data_root=(
 )
 
 # execution
-python test.py \
+../.venv/bin/python test.py \
     --data_root "$data_root" \
     --test_class $TEST_CLASS \
     --ckpt_path $CKPT_PATH \
