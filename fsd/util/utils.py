@@ -145,6 +145,7 @@ def load_model(filename, **kwargs):
         dill._dill._load_type,
         dill._dill._create_function,
         dill._dill._create_code,
+        dill._dill._eval_repr,
     ]):
         checkpoint = torch.load(
             filename,
