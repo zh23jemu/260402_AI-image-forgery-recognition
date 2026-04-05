@@ -3,9 +3,9 @@ OUTPUT_PATH='./output_dir'
 SEED=42
 
 # test class
-TEST_CLASS="ADM"
+TEST_CLASS="Midjourney"
 
-CKPT_PATH="your_ckpt_path/resnet50_200000.pth"
+CKPT_PATH="checkpoints/fsd/resnet50_exclude_midjourney_step[200000].pth"
 
 data_root=(
     "data/GenImage" \
