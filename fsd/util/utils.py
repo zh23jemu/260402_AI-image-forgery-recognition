@@ -3,6 +3,7 @@
 
 import os
 import random
+import argparse
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -118,15 +119,18 @@ def load_model(filename, **kwargs):
         Immutable objects will be assigned with saved values. 
     """
     
-    # Official checkpoints were saved with optimizer/scheduler objects, so on
-    # newer PyTorch versions we need weights_only=False for backward
-    # compatibility when loading trusted local files.
-    checkpoint = torch.load(
-        filename,
-        map_location='cpu',
-        weights_only=False,
-        pickle_module=dill,
-    ) #always cpu is well
+    # For evaluation we only need the serialized state dicts. On newer PyTorch
+    # versions, prefer the safer weights_only=True path and allowlist the small
+    # set of globals used in these official checkpoints.
+    with torch.serialization.safe_globals([
+        torch.optim.lr_scheduler.StepLR,
+        argparse.Namespace,
+    ]):
+        checkpoint = torch.load(
+            filename,
+            map_location='cpu',
+            weights_only=True,
+        ) #always cpu is well
 
     for k, v in kwargs.items(): 
         assert k in checkpoint, 'Key "%s" has not been found in checkpoint %s' % (k, filename)
