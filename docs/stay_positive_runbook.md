@@ -95,6 +95,25 @@ checkpoints/stay_positive/rajan-staypos.pth
 
 `--ix 2` 表示最后两列模型分数都会参与评估。
 
+### 5.5 批任务运行
+
+如果交互式 `srun --pty bash` 会话时间不够，建议直接提交批任务：
+
+```bash
+sbatch run_stay_positive_midjourney.slurm
+```
+
+该脚本会依次执行：
+
+1. real 图片打分
+2. Midjourney fake 图片打分
+3. `eval.py` 统计指标
+
+日志位置：
+
+- `logs/stay_positive_mj_<jobid>.out`
+- `logs/stay_positive_mj_<jobid>.err`
+
 ## 6. 运行前检查点
 
 在服务器真正运行之前，优先确认：
