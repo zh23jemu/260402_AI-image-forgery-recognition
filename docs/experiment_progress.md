@@ -32,6 +32,27 @@
 - `SD` 上的检测表现明显优于 `Midjourney`。
 - 当前结果已经可以作为论文与周报中的“实验进展”与“基线复现结果”使用。
 
+### Stay-Positive / Midjourney 评估
+
+- 模型：Stay-Positive
+- 测试数据：`real/val/nature` vs `Midjourney/val/ai`
+- 使用权重：
+  - `checkpoints/stay_positive/corvi-staypos.pth`
+  - `checkpoints/stay_positive/rajan-staypos.pth`
+- 运行环境：Slurm 单卡 `Tesla V100-PCIE-32GB`
+- 评估方式：`create_csv.py -> main.py -> eval.py`
+- `corvi-plus`
+  - RACC：`0.9956666666666667`
+  - FACC：`0.9963333333333333`
+  - ACC：`0.996`
+  - AP：`0.9998131520389307`
+- `rajan-ours-plus`
+  - RACC：`0.9976666666666667`
+  - FACC：`0.9703333333333334`
+  - ACC：`0.984`
+  - AP：`0.9994048293285538`
+- 说明：Stay-Positive 预训练模型已完成 `Midjourney` 数据上的首次有效验证，整体指标显著高于当前 FSD 在同类数据上的结果，其中 `corvi-plus` 表现最好。
+
 ### 下一步
 
 - 梳理 Stay-Positive 的最小运行入口，并尝试使用 `Corvi +` 与 `Rajan/Ours +` 进行测试。

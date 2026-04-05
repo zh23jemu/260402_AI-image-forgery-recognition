@@ -114,6 +114,27 @@ sbatch run_stay_positive_midjourney.slurm
 - `logs/stay_positive_mj_<jobid>.out`
 - `logs/stay_positive_mj_<jobid>.err`
 
+## 6. SD 测试扩展
+
+当 `Midjourney` 路线跑通后，可以用同样方式继续测试 `SD`：
+
+```bash
+sbatch run_stay_positive_sd.slurm
+```
+
+该脚本会自动：
+
+1. 生成 `real_val.csv`
+2. 生成 `sd_val.csv`
+3. 跑 `real_scores.csv`
+4. 跑 `sd_scores.csv`
+5. 调用 `eval.py` 输出指标
+
+日志位置：
+
+- `logs/stay_positive_sd_<jobid>.out`
+- `logs/stay_positive_sd_<jobid>.err`
+
 ## 6. 运行前检查点
 
 在服务器真正运行之前，优先确认：
