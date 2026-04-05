@@ -4,6 +4,7 @@
 import os
 import random
 import argparse
+import typing
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -125,6 +126,7 @@ def load_model(filename, **kwargs):
     with torch.serialization.safe_globals([
         torch.optim.lr_scheduler.StepLR,
         argparse.Namespace,
+        typing.TypeAlias,
         dill._dill._create_type,
         dill._dill._load_type,
     ]):
