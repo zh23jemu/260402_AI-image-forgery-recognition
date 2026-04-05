@@ -140,6 +140,7 @@ def load_model(filename, **kwargs):
         typing.FrozenSet,
         typing.Type,
         typing.Literal,
+        typing.Iterable,
         bytes,
         operator.getitem,
         dill._dill._create_type,
