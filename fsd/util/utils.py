@@ -129,6 +129,7 @@ def load_model(filename, **kwargs):
         argparse.Namespace,
         typing.TypeAlias,
         typing.Dict,
+        typing.Callable,
         operator.getitem,
         dill._dill._create_type,
         dill._dill._load_type,
