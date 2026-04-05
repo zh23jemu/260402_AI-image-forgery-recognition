@@ -16,6 +16,6 @@ data_root=(
     --data_root "$data_root" \
     --test_class $TEST_CLASS \
     --ckpt_path $CKPT_PATH \
-    --num_workers 8 \
+    --num_workers 0 \
     --seed $SEED \
-    --use_fp16 True \
+    --use_fp16 False \

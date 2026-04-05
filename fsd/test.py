@@ -51,10 +51,13 @@ def main():
     # For evaluation we load the full detector weights from CKPT_PATH, so we
     # avoid fetching ImageNet pretrained weights from the internet.
     model = timm.create_model("resnet50", pretrained=False, num_classes=1024)
+    logger.info(f"Loading checkpoint from {args.ckpt_path} ...")
     load_model(args.ckpt_path, model=model)
+    logger.info("Checkpoint loaded. Moving model to CUDA ...")
 
     # deployment
     model = model.to(args.device)
+    logger.info("Model moved to CUDA successfully. ")
     ############################################################
     
 
