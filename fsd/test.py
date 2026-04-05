@@ -48,7 +48,9 @@ def main():
     
     #################### setup model ####################
     logger.info("Creating model 'resnet50'... ")
-    model = timm.create_model("resnet50", pretrained=True, num_classes=1024)
+    # For evaluation we load the full detector weights from CKPT_PATH, so we
+    # avoid fetching ImageNet pretrained weights from the internet.
+    model = timm.create_model("resnet50", pretrained=False, num_classes=1024)
     load_model(args.ckpt_path, model=model)
 
     # deployment
