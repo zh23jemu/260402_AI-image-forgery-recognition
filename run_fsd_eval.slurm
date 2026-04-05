@@ -13,4 +13,5 @@ cd /net/8k3/e0fs01/users/xj62kv/260402_AI-image-forgery-recognition
 
 mkdir -p logs
 
-bash fsd/scripts/eval.sh
+cd fsd
+bash scripts/eval.sh
