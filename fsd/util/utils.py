@@ -125,6 +125,7 @@ def load_model(filename, **kwargs):
     with torch.serialization.safe_globals([
         torch.optim.lr_scheduler.StepLR,
         argparse.Namespace,
+        dill._dill._create_type,
     ]):
         checkpoint = torch.load(
             filename,
