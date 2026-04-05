@@ -3,9 +3,6 @@
 
 import os
 import random
-import argparse
-import typing
-import operator
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -121,39 +118,11 @@ def load_model(filename, **kwargs):
         Immutable objects will be assigned with saved values. 
     """
     
-    # For evaluation we only need the serialized state dicts. On newer PyTorch
-    # versions, prefer the safer weights_only=True path and allowlist the small
-    # set of globals used in these official checkpoints.
-    with torch.serialization.safe_globals([
-        torch.optim.lr_scheduler.StepLR,
-        argparse.Namespace,
-        typing.TypeAlias,
-        typing.Dict,
-        typing.Callable,
-        typing.Self,
-        typing.Any,
-        typing.Optional,
-        typing.Union,
-        typing.List,
-        typing.Tuple,
-        typing.Set,
-        typing.FrozenSet,
-        typing.Type,
-        typing.Literal,
-        typing.Iterable,
-        bytes,
-        operator.getitem,
-        dill._dill._create_type,
-        dill._dill._load_type,
-        dill._dill._create_function,
-        dill._dill._create_code,
-        dill._dill._eval_repr,
-    ]):
-        checkpoint = torch.load(
-            filename,
-            map_location='cpu',
-            weights_only=True,
-        ) #always cpu is well
+    checkpoint = torch.load(
+        filename,
+        map_location='cpu',
+        weights_only=True,
+    ) #always cpu is well
 
     for k, v in kwargs.items(): 
         assert k in checkpoint, 'Key "%s" has not been found in checkpoint %s' % (k, filename)
