@@ -118,7 +118,10 @@ def load_model(filename, **kwargs):
         Immutable objects will be assigned with saved values. 
     """
     
-    checkpoint = torch.load(filename, map_location='cpu') #always cpu is well
+    # Official checkpoints were saved with optimizer/scheduler objects, so on
+    # newer PyTorch versions we need weights_only=False for backward
+    # compatibility when loading trusted local files.
+    checkpoint = torch.load(filename, map_location='cpu', weights_only=False) #always cpu is well
 
     for k, v in kwargs.items(): 
         assert k in checkpoint, 'Key "%s" has not been found in checkpoint %s' % (k, filename)
@@ -128,4 +131,3 @@ def load_model(filename, **kwargs):
             kwargs[k] = checkpoint[k]
     
     return kwargs
-
