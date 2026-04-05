@@ -128,6 +128,7 @@ def load_model(filename, **kwargs):
         torch.optim.lr_scheduler.StepLR,
         argparse.Namespace,
         typing.TypeAlias,
+        typing.Dict,
         operator.getitem,
         dill._dill._create_type,
         dill._dill._load_type,
