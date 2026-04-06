@@ -53,8 +53,29 @@
   - AP：`0.9994048293285538`
 - 说明：Stay-Positive 预训练模型已完成 `Midjourney` 数据上的首次有效验证，整体指标显著高于当前 FSD 在同类数据上的结果，其中 `corvi-plus` 表现最好。
 
+### Stay-Positive / SD 评估
+
+- 模型：Stay-Positive
+- 测试数据：`real/val/nature` vs `SD/val/ai`
+- 使用权重：
+  - `checkpoints/stay_positive/corvi-staypos.pth`
+  - `checkpoints/stay_positive/rajan-staypos.pth`
+- 运行环境：Slurm 单卡 `Tesla V100-PCIE-32GB`
+- 评估方式：`create_csv.py -> main.py -> eval.py`
+- `corvi-plus`
+  - RACC：`0.9956666666666667`
+  - FACC：`1.0`
+  - ACC：`0.9978333333333333`
+  - AP：`1.0`
+- `rajan-ours-plus`
+  - RACC：`0.9976666666666667`
+  - FACC：`1.0`
+  - ACC：`0.9988333333333334`
+  - AP：`1.0`
+- 说明：Stay-Positive 在 `SD` 数据上的两种预训练模型均取得接近满分的结果，其中 `rajan-ours-plus` 略优于 `corvi-plus`。
+
 ### 下一步
 
-- 梳理 Stay-Positive 的最小运行入口，并尝试使用 `Corvi +` 与 `Rajan/Ours +` 进行测试。
-- 将 `Midjourney` 与 `SD` 的结果整理进论文“实验进展”与“基线复现结果”部分。
-- 对比 FSD 在不同生成器上的表现差异，为后续方法改进提供依据。
+- 将 `FSD` 与 `Stay-Positive` 在 `Midjourney`、`SD` 两类数据上的结果整理成统一对比表。
+- 分析为何 `Stay-Positive` 在当前数据设置下显著优于 FSD，并讨论数据设定与任务定义差异。
+- 继续准备后续方法整合与改进方案。
