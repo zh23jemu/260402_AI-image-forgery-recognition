@@ -1,5 +1,6 @@
 *.pdf
 checkpoints/*/*.pth
+!checkpoints/fsd/*_converted.pth
 .venv/
 __pycache__/
 *.py[cod]
