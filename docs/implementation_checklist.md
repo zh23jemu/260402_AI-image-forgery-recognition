@@ -4,18 +4,19 @@
 
 当前工作区已经具备以下内容：
 
-- 论文初稿正文：[docs/paper_draft.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/paper_draft.md)
+- 论文主稿正文：[docs/full_paper_draft.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/full_paper_draft.md)
 - 代码准备方案：[docs/code_baseline_plan.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/code_baseline_plan.md)
 - 联合设计说明：[docs/fusion_design.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/fusion_design.md)
+- 下一步训练方案：[docs/next_stage_training_plan.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/next_stage_training_plan.md)
+- 训练前检查清单：[docs/training_ready_checklist.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/training_ready_checklist.md)
 - 下载入口整理：[notes/download_links.md](/C:/Coding/260402_AI-image-forgery-recognition/notes/download_links.md)
 
-当前仍未到位的资源：
+当前仍需在训练前再次确认的资源：
 
-- FSD 官方代码
-- Stay-Positive 官方代码
-- FSD checkpoint
-- Stay-Positive 预训练模型
-- GenImage 最小数据子集
+- 训练输出目录是否具备写权限
+- `data/GenImage` 是否在服务器端保持统一入口
+- FSD 训练脚本是否使用 `.venv` 内的 `torchrun`
+- 首轮训练的目标类别与日志命名是否已经固定
 
 ## 2. 资源落位要求
 
@@ -61,7 +62,7 @@
 - [checkpoints/fsd](/C:/Coding/260402_AI-image-forgery-recognition/checkpoints/fsd)
 - [checkpoints/stay_positive](/C:/Coding/260402_AI-image-forgery-recognition/checkpoints/stay_positive)
 
-## 3. 到位后的第二次检查重点
+## 3. 进入训练前的第二次检查重点
 
 资源到位后，需要重点检查以下内容：
 
@@ -70,27 +71,23 @@
 3. Stay-Positive 的测试代码入口在哪个目录。
 4. Stay-Positive 的预训练模型与测试代码是否一一对应。
 5. GenImage 的目录命名是否与代码中使用的命名一致。
-6. 当前仅使用 `Stable Diffusion V1.4` 时，哪些脚本可以直接跑，哪些脚本仍依赖完整数据结构。
+6. 当前训练是否已经从“最小子集验证”切换到“统一主数据目录”。
 7. 是否已经按 FSD 代码要求补出 `SD/` 和 `real/` 目录，而不是仅保留 GenImage 原始命名。
+8. 训练脚本、日志脚本和论文口径是否一致指向同一个首轮训练目标。
 
 ## 4. 当前论文写作可直接引用的结论
 
 在资源未完全到位前，论文中已经可以稳定使用以下口径：
 
 - 本研究当前阶段基于公开论文、官方代码、预训练模型和公开数据入口开展工作。
-- 当前阶段优先完成基线建立与流程验证，而不直接开展联合重训练。
-- 当前数据准备采用最小子集策略，先以 `Stable Diffusion V1.4` 作为流程验证数据来源。
-- FSD 作为未知模型少样本检测主框架，Stay-Positive 作为抗真实特征干扰的增强思想。
+- 当前阶段已经完成基线建立与流程验证，具备进入最小改进训练的条件。
+- 下一步训练将优先围绕 `FSD` 主干展开，并以 `ADM` 作为首个训练切入点。
+- `Stay-Positive` 仍作为增强思想和对照基线，`LVLM` 作为解释性补充路线保留在论文结构中。
 
 ## 5. 下一轮可直接继续做的事情
 
-只要你把代码、权重或数据中的任意一项放进来，我下一轮就可以继续做对应检查：
+- 如果直接进入训练准备，我下一轮就优先做这三件事：
 
-- 如果你先放 **FSD 代码**：
-  我会检查 `requirements.txt`、`scripts/`、路径假设和最小运行命令。
-- 如果你先放 **Stay-Positive 代码**：
-  我会梳理预训练模型入口、测试脚本和与 FSD 的可连接点。
-- 如果你先放 **checkpoint**：
-  我会把权重路径规则写死到本地文档里。
-- 如果你先放 **GenImage 数据**：
-  我会核对目录名、数据层级和是否需要补 `real/`。
+1. 检查并确认首轮训练脚本参数。
+2. 整理训练输出目录与日志命名规则。
+3. 在训练完成后立刻把结果补进论文和结果总表。
