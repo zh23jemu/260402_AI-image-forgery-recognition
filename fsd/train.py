@@ -19,10 +19,28 @@ from util.utils import save_model, setup_dist
 import util.logger as logger
 
 
+def resolve_data_root(data_root):
+    if os.path.isabs(data_root) and os.path.exists(data_root):
+        return data_root
+
+    candidates = [
+        os.path.abspath(data_root),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", data_root)),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "GenImage")),
+    ]
+
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+
+    return os.path.abspath(data_root)
+
+
 def main(): 
     #################### prepare ####################
     args = TrainParser().args
     setup_dist(args) # ddp setup
+    args.data_root = resolve_data_root(args.data_root)
 
     # terminal writer and file writer
     logger.setup(log_dir=args.output_dir, device=args.device)
@@ -31,9 +49,10 @@ def main():
     
     ########## setup dataset and dataloader #########
     logger.info("Creating training data loader...")
+    logger.info(f"Resolved data root: {args.data_root}")
 
     # data we use in GenImage, real is nature from SDv14 & SDv15
-    IMAGE_FOLDERS = ["real", "ADM", "BigGAN", "glide", "Midjourney", "SD", "VQDM"]
+    IMAGE_FOLDERS = ["real", "ADM", "BigGAN", "GLIDE", "Midjourney", "SD", "VQDM"]
     IMAGE_FOLDERS.remove(args.exclude_class)
     logger.info(f"Exclude class: {args.exclude_class}")
 
@@ -58,7 +77,8 @@ def main():
     
     ################## create model #################
     logger.info("Creating model 'resnet50'... ")
-    model = timm.create_model("resnet50", pretrained=True, num_classes=1024)
+    logger.info(f"Use pretrained backbone: {args.pretrained_backbone}")
+    model = timm.create_model("resnet50", pretrained=args.pretrained_backbone, num_classes=1024)
     print(model)
 
     model = model.to(args.device)

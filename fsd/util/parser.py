@@ -40,6 +40,7 @@ class TrainParser(ModelParser):
         super().__init__()
         """ optimizer options """
         self.parser.add_argument('--use_fp16', type=self._str2bool, default=True, help='Use fp16 when training. ')
+        self.parser.add_argument('--pretrained_backbone', type=self._str2bool, default=False, help='Whether to load pretrained ImageNet backbone weights. ')
         self.parser.add_argument('--lr', type=float, default=1e-4, help='Base learning rate for training. ')
         self.parser.add_argument('--lr_scheduler_gamma', type=float, default=0.5, help='Gamma in StepLR. ')
         self.parser.add_argument('--lr_scheduler_step', type=int, default=80000, help='Scheduler step in StepLR. ')

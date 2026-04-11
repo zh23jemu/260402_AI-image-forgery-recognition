@@ -17,10 +17,28 @@ from util.utils import load_model
 import util.logger as logger
 
 
+def resolve_data_root(data_root):
+    if os.path.isabs(data_root) and os.path.exists(data_root):
+        return data_root
+
+    candidates = [
+        os.path.abspath(data_root),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", data_root)),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "GenImage")),
+    ]
+
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+
+    return os.path.abspath(data_root)
+
+
 # no ddp setting
 def main(): 
     #################### prepare device ####################
     args = TestParser().args
+    args.data_root = resolve_data_root(args.data_root)
     args.device = torch.device("cuda")
     # terminal writer and file writer
     logger.setup(log_dir=args.output_dir, device=None)
@@ -29,10 +47,11 @@ def main():
 
     #################### setup dataset and dataloader ####################
     logger.info("Creating test data loader...")
+    logger.info(f"Resolved data root: {args.data_root}")
 
     # data we use in GenImage
     if args.test_class.upper() == "NONE": # test on all classes
-        TEST_FOLDERS = ["real", "Midjourney", "SD", "ADM", "glide", "VQDM", "BigGAN"]
+        TEST_FOLDERS = ["real", "Midjourney", "SD", "ADM", "GLIDE", "VQDM", "BigGAN"]
     else: # test on single class
         TEST_FOLDERS = ["real", args.test_class]
     
