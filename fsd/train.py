@@ -15,7 +15,7 @@ from torchmetrics.classification import Accuracy, AveragePrecision
 from model.prototypical_utils import compute_prototypical_loss
 from datasets import setup_infinity_train_dataloader, setup_val_dataloader
 from util.parser import TrainParser
-from util.utils import save_model, setup_dist
+from util.utils import load_model, save_model, setup_dist
 import util.logger as logger
 
 
@@ -36,11 +36,31 @@ def resolve_data_root(data_root):
     return os.path.abspath(data_root)
 
 
+def resolve_optional_path(path_value):
+    if not path_value:
+        return ""
+
+    if os.path.isabs(path_value) and os.path.exists(path_value):
+        return path_value
+
+    candidates = [
+        os.path.abspath(path_value),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", path_value)),
+    ]
+
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+
+    return os.path.abspath(path_value)
+
+
 def main(): 
     #################### prepare ####################
     args = TrainParser().args
     setup_dist(args) # ddp setup
     args.data_root = resolve_data_root(args.data_root)
+    args.init_ckpt_path = resolve_optional_path(args.init_ckpt_path)
 
     # terminal writer and file writer
     logger.setup(log_dir=args.output_dir, device=args.device)
@@ -79,6 +99,11 @@ def main():
     logger.info("Creating model 'resnet50'... ")
     logger.info(f"Use pretrained backbone: {args.pretrained_backbone}")
     model = timm.create_model("resnet50", pretrained=args.pretrained_backbone, num_classes=1024)
+
+    if args.init_ckpt_path:
+        logger.info(f"Initializing model weights from checkpoint: {args.init_ckpt_path}")
+        load_model(args.init_ckpt_path, model=model)
+
     print(model)
 
     model = model.to(args.device)

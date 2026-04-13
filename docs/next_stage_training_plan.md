@@ -2,13 +2,13 @@
 
 ## 1. 当前结论
 
-当前文书、基线结果和方法口径已经基本收束完成，下一步可以正式进入最小改进训练。
+当前文书、基线结果和方法口径已经基本收束完成，下一步应进入“基于官方 checkpoint 的最小微调训练”。
 
 默认首个训练对象建议为：
 
 - 方法：`FSD`
 - 目标类别：`ADM`
-- 训练性质：最小改进训练
+- 训练性质：基于官方 checkpoint 的最小微调
 
 ## 2. 为什么先训 FSD / ADM
 
@@ -24,25 +24,27 @@
 首轮训练不追求一步到位，而是先完成以下目标：
 
 1. 让训练链路稳定跑通
-2. 获得一条自训练模型结果
-3. 与当前 `ADM` 官方 converted checkpoint 结果做对比
-4. 判断训练是否值得继续扩展
+2. 获得一条基于官方 checkpoint 的微调结果
+3. 与当前从零初始化训练结果做对比
+4. 与当前 `ADM` 官方 converted checkpoint 结果做对比
+5. 判断微调是否值得继续扩展
 
 ## 4. 推荐训练配置
 
 当前建议的首轮训练配置如下：
 
 - `EXCLUDE_CLASS=ADM`
+- `INIT_CKPT_PATH=../checkpoints/fsd/resnet50_exclude_adm_step[200000]_converted.pth`
 - `GPU_NUM=1`
 - `NUM_WORKERS=8`
 - `BATCH_SIZE=16`
-- `LR=1e-4`
-- `TOTAL_TRAINING_STEPS=50000`
+- `LR=1e-5`
+- `TOTAL_TRAINING_STEPS=10000`
 - `USE_FP16=True`
 
 如果想先做更低风险试跑，可先把：
 
-- `TOTAL_TRAINING_STEPS` 调成 `5000` 或 `10000`
+- `TOTAL_TRAINING_STEPS` 调成 `2000` 或 `5000`
 
 用于检查训练是否稳定。
 
@@ -51,7 +53,7 @@
 建议首轮训练输出目录使用清晰命名，例如：
 
 ```text
-fsd/output/train_adm_stage1
+fsd/output/finetune_adm_stage1
 ```
 
 日志文件建议单独保留，便于后续写论文时引用。
@@ -63,8 +65,9 @@ fsd/output/train_adm_stage1
 1. 训练是否完整跑完
 2. 输出目录中是否生成 checkpoint
 3. 用新 checkpoint 在 `ADM` 上重新评估
-4. 与当前 `resnet50_exclude_adm_step[200000]_converted.pth` 做对比
-5. 判断指标变化是否值得继续扩展到其他类别
+4. 与从零初始化训练结果做对比
+5. 与当前 `resnet50_exclude_adm_step[200000]_converted.pth` 做对比
+6. 判断指标变化是否值得继续扩展到其他类别
 
 ## 7. 训练后文书补位
 
@@ -85,6 +88,6 @@ fsd/output/train_adm_stage1
 现在最稳妥的推进方式是：
 
 1. 先按训练前检查清单确认环境
-2. 跑一轮 `FSD / ADM` 最小训练
+2. 跑一轮 `FSD / ADM` 基于官方 checkpoint 的最小微调
 3. 评估结果
 4. 再决定要不要做第二轮扩展或更复杂方案

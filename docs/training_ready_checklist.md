@@ -28,18 +28,20 @@
 - `fsd/test.py` 存在
 - `fsd/scripts/train.sh` 已改为使用本地 `.venv` 的 `torchrun`
 - `fsd/scripts/eval_adm.sh` 可继续用于训练后评估
+- 官方 `ADM converted checkpoint` 存在并可读
 
 ## 5. 输出检查
 
 - 输出目录已规划
 - 日志命名已规划
 - 训练完成后 checkpoint 保存位置已明确
+- 微调初始化 checkpoint 路径已明确
 
 ## 6. 论文口径检查
 
 训练开始前，统一口径应为：
 
-- 当前进入的是“最小改进训练”
+- 当前进入的是“基于官方 checkpoint 的最小微调”
 - 首轮对象是 `FSD / ADM`
 - `Stay-Positive` 继续作为增强思想和对照基线
 - `LVLM` 继续作为解释性补充路线
