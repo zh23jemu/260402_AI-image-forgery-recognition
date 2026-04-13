@@ -28,6 +28,9 @@ EXCLUDE_CLASS=${EXCLUDE_CLASS:-ADM}
 BATCH_SIZE=${BATCH_SIZE:-16}
 LR=${LR:-1e-4}
 TOTAL_TRAINING_STEPS=${TOTAL_TRAINING_STEPS:-50000}
+SAVE_INTERVAL=${SAVE_INTERVAL:-10000}
+EVAL_INTERVAL=${EVAL_INTERVAL:-10000}
+LOG_INTERVAL=${LOG_INTERVAL:-1000}
 ACCUMULATION_STEPS=${ACCUMULATION_STEPS:-1}
 USE_FP16=${USE_FP16:-True}
 PRETRAINED_BACKBONE=${PRETRAINED_BACKBONE:-False}
@@ -43,7 +46,10 @@ OMP_NUM_THREADS=1 "$REPO_ROOT/.venv/bin/torchrun" $DISTRIBUTED_ARGS "$FSD_DIR/tr
     --lr $LR \
     --exclude_class $EXCLUDE_CLASS \
     --total_training_steps $TOTAL_TRAINING_STEPS \
+    --save_interval $SAVE_INTERVAL \
+    --eval_interval $EVAL_INTERVAL \
+    --log_interval $LOG_INTERVAL \
     --accumulation_steps $ACCUMULATION_STEPS \
     --use_fp16 $USE_FP16 \
     --pretrained_backbone $PRETRAINED_BACKBONE \
-    --init_ckpt_path "$INIT_CKPT_PATH" \
+    --init_ckpt_path "$INIT_CKPT_PATH"

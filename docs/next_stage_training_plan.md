@@ -39,10 +39,13 @@
 - `BATCH_SIZE=16`
 - `LR=5e-6`
 - `TOTAL_TRAINING_STEPS=5000`
+- `SAVE_INTERVAL=5000`
+- `EVAL_INTERVAL=5000`
 - `USE_FP16=True`
 - `OUTPUT_PATH=./output/finetune_adm_stage2`
 
 这轮的目标不是做大改，而是用更小步长做一次更稳的轻推。
+保存和评估间隔需要与 `TOTAL_TRAINING_STEPS` 对齐，否则训练可能正常完成但不会触发 checkpoint 保存与最终评估。
 
 ## 5. 训练输出建议
 

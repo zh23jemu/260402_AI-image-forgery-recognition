@@ -45,6 +45,8 @@
 - `INIT_CKPT_PATH=../checkpoints/fsd/resnet50_exclude_adm_step[200000]_converted.pth`
 - `LR=5e-6`
 - `TOTAL_TRAINING_STEPS=5000`
+- `SAVE_INTERVAL=5000`
+- `EVAL_INTERVAL=5000`
 - `BATCH_SIZE=16`
 - `GPU_NUM=1`
 - `OUTPUT_PATH=./output/finetune_adm_stage2`
@@ -54,6 +56,7 @@
 - 当前首轮微调已经接近官方基线，不适合做激进改动
 - 更小学习率更适合在强基线上做轻量修正
 - 更短步数可以降低过拟合和指标回摆风险
+- 保存和评估间隔与训练步数对齐，保证第二轮结束时一定产出 checkpoint 和最终评估结果
 - 这一轮更适合验证“能否把 `ADM` 再轻推一步”
 
 ## 5. 第二轮观察目标
