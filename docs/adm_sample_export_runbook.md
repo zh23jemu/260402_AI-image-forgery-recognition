@@ -9,7 +9,23 @@
 - 第二轮保守微调 `FSD` 的 `ADM` 样本级结果
 - 最终统一合并为一个 `adm_sample_export.csv`
 
-## 2. 第一步：导出官方 FSD 样本级结果
+## 2. 推荐方式：直接提交 slurm 任务
+
+如果登录节点没有 GPU，最推荐直接提交：
+
+```bash
+sbatch run_adm_sample_export.slurm
+```
+
+跑完后检查：
+
+```bash
+tail -f logs/adm_sample_export_*.out logs/adm_sample_export_*.err
+ls -lh analysis/adm_*.csv
+head -5 analysis/adm_sample_export.csv
+```
+
+## 3. 手动方式：逐步导出官方 FSD 样本级结果
 
 在服务器项目根目录执行：
 
@@ -26,7 +42,7 @@ cd fsd
   --use_fp16 True
 ```
 
-## 3. 第二步：导出首轮微调样本级结果
+## 4. 第二步：导出首轮微调样本级结果
 
 请把 `CKPT_PATH` 改成首轮微调实际产出的 checkpoint 路径，例如：
 
@@ -42,7 +58,7 @@ cd fsd
   --use_fp16 True
 ```
 
-## 4. 第三步：导出第二轮保守微调样本级结果
+## 5. 第三步：导出第二轮保守微调样本级结果
 
 请把 `CKPT_PATH` 改成第二轮实际产出的 checkpoint 路径，例如：
 
@@ -58,7 +74,7 @@ cd fsd
   --use_fp16 True
 ```
 
-## 5. 第四步：合并 Stay-Positive 与 FSD
+## 6. 第四步：合并 Stay-Positive 与 FSD
 
 回到项目根目录执行：
 
@@ -73,7 +89,7 @@ cd fsd
   --output_csv analysis/adm_sample_export.csv
 ```
 
-## 6. 最终产物
+## 7. 最终产物
 
 最终最关键的文件是：
 
@@ -86,13 +102,13 @@ analysis/adm_sample_export.csv
 - `docs/lvlm_adm_case_screening_sheet.md`
 - `docs/lvlm_adm_case_batch1_template.md`
 
-## 7. 当前建议
+## 8. 当前建议
 
-先不要一上来追求特别复杂的导出流程。
+如果服务器登录节点没有 GPU，就不要在登录节点直接跑 `cuda` 导出。
 
 最稳妥的顺序是：
 
-1. 先导出官方 `FSD`
-2. 再导出首轮微调
-3. 再导出第二轮保守微调
-4. 最后统一合并
+1. 直接 `sbatch run_adm_sample_export.slurm`
+2. 等导出完成
+3. 检查 `analysis/adm_sample_export.csv`
+4. 再同步回本地开始填案例

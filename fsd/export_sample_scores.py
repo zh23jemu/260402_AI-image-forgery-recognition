@@ -92,7 +92,12 @@ def collect_support(dataset, num_support):
 
 def export_scores(args):
     data_root = resolve_data_root(args.data_root)
-    device = torch.device(args.device)
+    requested_device = args.device
+    if requested_device.startswith("cuda") and not torch.cuda.is_available():
+        warnings.warn("CUDA is unavailable. Falling back to CPU for sample export.")
+        requested_device = "cpu"
+    device = torch.device(requested_device)
+    use_fp16 = bool(args.use_fp16 and device.type == "cuda")
 
     real_dataset = build_dataset(os.path.join(data_root, "real", "val"))
     fake_dataset = build_dataset(os.path.join(data_root, args.test_class, "val"))
@@ -135,7 +140,7 @@ def export_scores(args):
 
             labels = torch.arange(0, 2, device=device).repeat(query_size)
 
-            with autocast(enabled=args.use_fp16, device_type="cuda"):
+            with autocast(enabled=use_fp16, device_type=device.type):
                 outputs = model(batch_data)
             outputs = rearrange(outputs, "(n b) l -> 1 b n l", n=2)
 
