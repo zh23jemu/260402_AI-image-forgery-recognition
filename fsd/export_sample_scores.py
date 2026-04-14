@@ -6,6 +6,7 @@ import csv
 import os
 import warnings
 
+import dill
 import timm
 import torch
 from PIL import Image, UnidentifiedImageError
@@ -80,6 +81,37 @@ def build_dataset(folder_path):
     return ValidatedPathImageFolder(folder_path, transform=transform)
 
 
+def robust_load_model(ckpt_path, model):
+    try:
+        load_model(ckpt_path, model=model)
+        return "weights_only"
+    except Exception as exc:
+        warnings.warn(
+            f"Standard weights-only loading failed for {ckpt_path} ({exc}). "
+            "Falling back to dill-based full checkpoint loading."
+        )
+
+    checkpoint = torch.load(
+        ckpt_path,
+        map_location="cpu",
+        pickle_module=dill,
+        weights_only=False,
+    )
+
+    if "model" in checkpoint:
+        model.load_state_dict(checkpoint["model"])
+        return "dill_checkpoint:model"
+
+    if "state_dict" in checkpoint:
+        model.load_state_dict(checkpoint["state_dict"])
+        return "dill_checkpoint:state_dict"
+
+    raise KeyError(
+        f"Unable to find model weights in checkpoint {ckpt_path}. "
+        "Expected key 'model' or 'state_dict'."
+    )
+
+
 def collect_support(dataset, num_support):
     support_tensors = []
     support_paths = []
@@ -109,8 +141,9 @@ def export_scores(args):
     fake_support, fake_support_paths = collect_support(fake_dataset, args.num_support)
 
     model = timm.create_model("resnet50", pretrained=False, num_classes=1024)
-    load_model(args.ckpt_path, model=model)
+    load_mode = robust_load_model(args.ckpt_path, model=model)
     model = model.to(device).eval()
+    print(f"Loaded checkpoint {args.ckpt_path} via mode: {load_mode}")
 
     max_queries = min(len(real_dataset), len(fake_dataset))
     rows = []

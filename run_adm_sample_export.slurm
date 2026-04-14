@@ -9,6 +9,8 @@
 #SBATCH -o logs/adm_sample_export_%j.out
 #SBATCH -e logs/adm_sample_export_%j.err
 
+set -euo pipefail
+
 cd /net/8k3/e0fs01/users/xj62kv/260402_AI-image-forgery-recognition
 
 mkdir -p logs
@@ -16,6 +18,7 @@ mkdir -p analysis
 
 cd fsd
 
+echo "[1/4] Export official FSD ADM sample scores"
 ../.venv/bin/python export_sample_scores.py \
   --data_root ../data/GenImage \
   --test_class ADM \
@@ -26,6 +29,7 @@ cd fsd
   --use_fp16 True \
   --device cuda
 
+echo "[2/4] Export finetune v1 ADM sample scores"
 ../.venv/bin/python export_sample_scores.py \
   --data_root ../data/GenImage \
   --test_class ADM \
@@ -36,6 +40,7 @@ cd fsd
   --use_fp16 True \
   --device cuda
 
+echo "[3/4] Export finetune v2 ADM sample scores"
 ../.venv/bin/python export_sample_scores.py \
   --data_root ../data/GenImage \
   --test_class ADM \
@@ -47,6 +52,8 @@ cd fsd
   --device cuda
 
 cd ..
+
+echo "[4/4] Merge FSD and Stay-Positive ADM sample scores"
 
 ./.venv/bin/python tools/build_adm_sample_export.py \
   --official_csv analysis/adm_official_fsd.csv \
