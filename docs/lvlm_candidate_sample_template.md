@@ -21,8 +21,14 @@
 - `generator_type`
 - `ground_truth`
 - `case_source`
+- `official_fsd_prediction`
+- `official_fsd_score`
 - `fsd_prediction`
 - `fsd_score`
+- `fsd_finetune_v1_prediction`
+- `fsd_finetune_v1_score`
+- `fsd_finetune_v2_prediction`
+- `fsd_finetune_v2_score`
 - `stay_positive_prediction`
 - `stay_positive_score`
 - `candidate_reason`
@@ -48,25 +54,25 @@
 
 ## 4. Markdown 表格模板
 
-| sample_id | image_path | generator_type | ground_truth | case_source | fsd_prediction | fsd_score | stay_positive_prediction | stay_positive_score | candidate_reason | priority | selected_for_lvlm | notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| sample_001 | 待填写 | ADM | fake | fsd_misclassified | real | 待填写 | fake | 待填写 | FSD 误判且视觉上不容易直接判断 | high | pending | 待补截图或人工备注 |
-| sample_002 | 待填写 | Midjourney | fake | model_conflict | fake | 待填写 | real | 待填写 | 两模型结论冲突，适合做解释 | high | pending | 待补 |
-| sample_003 | 待填写 | SD | fake | borderline_case | fake | 待填写 | fake | 待填写 | 分数接近阈值，适合边界分析 | medium | pending | 待补 |
+| sample_id | image_path | generator_type | ground_truth | case_source | official_fsd_prediction | official_fsd_score | fsd_finetune_v1_prediction | fsd_finetune_v1_score | fsd_finetune_v2_prediction | fsd_finetune_v2_score | stay_positive_prediction | stay_positive_score | candidate_reason | priority | selected_for_lvlm | notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| sample_001 | 待填写 | ADM | fake | fsd_misclassified | real | 待填写 | fake | 待填写 | real | 待填写 | fake | 待填写 | 官方与两轮微调结论不稳，适合解释 | high | pending | 待补截图或人工备注 |
+| sample_002 | 待填写 | ADM | fake | model_conflict | fake | 待填写 | fake | 待填写 | fake | 待填写 | real | 待填写 | FSD 与 Stay-Positive 结论冲突，适合做解释 | high | pending | 待补 |
+| sample_003 | 待填写 | ADM | fake | borderline_case | fake | 待填写 | fake | 待填写 | fake | 待填写 | fake | 待填写 | 分数接近阈值，适合边界分析 | medium | pending | 待补 |
 
 ## 5. CSV 表头模板
 
 后续如果要转成 CSV，可直接使用下面这一行：
 
 ```text
-sample_id,image_path,generator_type,ground_truth,case_source,fsd_prediction,fsd_score,stay_positive_prediction,stay_positive_score,candidate_reason,priority,selected_for_lvlm,notes
+sample_id,image_path,generator_type,ground_truth,case_source,official_fsd_prediction,official_fsd_score,fsd_finetune_v1_prediction,fsd_finetune_v1_score,fsd_finetune_v2_prediction,fsd_finetune_v2_score,stay_positive_prediction,stay_positive_score,candidate_reason,priority,selected_for_lvlm,notes
 ```
 
 ## 6. 推荐筛选顺序
 
 建议按下面顺序填这个模板：
 
-1. 先填 `FSD` 在 `ADM`、`VQDM` 中的明显误判样本
+1. 先填 `ADM` 中官方基线、首轮微调、第二轮微调结论不一致或都不稳定的样本
 2. 再填 `FSD` 与 `Stay-Positive` 结论冲突的样本
 3. 最后补充边界样本
 

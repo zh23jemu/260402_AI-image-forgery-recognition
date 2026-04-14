@@ -21,6 +21,7 @@
 - `LVLM` 已纳入整体研究方向，但当前仍需补完整正文、案例入口、提示词方案和可行性表述
 - 方法对比表、实验进展记录和阶段性提交稿
 - 服务器 GPU 运行环境、数据目录和模型权重基本打通
+- `ADM` 训练探索已经形成完整链条：从零初始化训练、首轮微调正结果、第二轮保守微调负结果
 
 ## 分阶段安排
 
@@ -58,8 +59,9 @@
 - 完成“实验结果与分析”章节
 - 完成“方法比较与局限性”章节
 - 补充统一口径的结果解释，避免过强结论
+- 固化 `ADM` 训练探索结论，明确“首轮微调有效、第二轮保守微调未进一步改善”
 - 完成 `LVLM` 相关章节或小节，使三条研究线在论文中形成完整结构
-- 设计 `LVLM` 轻量案例分析方案，优先面向误判样本、冲突样本或边界样本
+- 设计 `LVLM` 轻量案例分析方案，优先面向 `ADM` 误判样本、冲突样本或边界样本
 - 如时间可控，补 1 组 `LVLM` 小样本示例分析作为论文中的辅助案例
 - 形成一版老师可直接审阅的提交稿
 
@@ -69,6 +71,7 @@
 - 提交版摘要、目录、实验进展
 - 统一的结果说明文本
 - `LVLM` 案例分析说明或样例记录
+- 训练探索结论定稿文本
 
 ### 第三阶段：4/21 - 4/25
 
@@ -96,32 +99,34 @@
 - 将 `LVLM` 纳入本次论文正文结构
 - 写清三类方法在任务目标与适用场景上的差异
 - 写清 `LVLM` 当前不是正式数值主实验，而是本次论文中的必要研究线与后续验证方向
+- 写清当前训练探索已经足够支撑论文，不再默认继续第三轮微调
 
 ### 选做
 
-- 继续补 FSD 在更多生成器类别上的结果
-- 补 Stay-Positive 在更多类别上的结果
 - 补 `LVLM` 的轻量可行性验证或示例分析
 - 进一步完善对比表和图示
+- 如确有必要，再设计第三轮极小改动训练
 
 ### 暂缓
 
 - 启动高风险的大规模联合训练
 - 引入新的大体量数据集导致节奏失控
+- 在没有明确论文收益前继续无边界微调调参
 
 ## 当前阶段的写作口径
 
 - Stay-Positive 在当前 real/fake 对照测试中表现更强
 - FSD 更适合承接“未知模型泛化”这条主线
 - `LVLM` 在本次论文中作为第三条研究线纳入，但当前以方法分析、研究作用、案例设计和轻量验证为主
-- 当前阶段是“基线复现、方法比较与研究方案完善”，不是最终改进完成稿
+- 当前阶段是“基线复现、方法比较、训练探索收束与研究方案完善”，不是最终改进完成稿
+- `ADM` 训练探索应统一表述为：首轮微调有效，第二轮保守微调未进一步改善，因此当前最优训练探索结果仍是首轮微调
 
 ## 实际执行提醒规则
 
 后续我们继续推进时，默认按这份计划提醒：
 
 - 如果当前时间仍在 4/13 前，优先提醒你整合论文正文和已有结果
-- 如果进入 4/14 - 4/20，优先提醒你完善实验分析、补足 `LVLM` 案例设计并推进提交稿
+- 如果进入 4/14 - 4/20，优先提醒你完善实验分析、固化训练探索结论、补足 `LVLM` 案例设计并推进提交稿
 - 如果进入 4/21 - 4/25，优先提醒你收尾、润色和查漏补缺
 - 如果你临时想加新任务，我会优先按这份计划判断它是否值得做、会不会影响 4/25 成稿
 
@@ -133,6 +138,17 @@
 - `docs/lvlm_prompt_templates.md`
 - `docs/lvlm_candidate_sample_template.md`
 - `docs/lvlm_case_record_template.md`
+- `docs/lvlm_adm_case_screening_sheet.md`
+- `docs/lvlm_adm_collection_instructions.md`
+- `docs/lvlm_paper_paragraph_skeleton.md`
+- `docs/lvlm_adm_case_batch1_template.md`
+- `docs/lvlm_execution_checklist.md`
+- `docs/lvlm_adm_paper_insert.md`
+- `docs/lvlm_adm_batch1_assignment.md`
+- `docs/lvlm_adm_fill_order.md`
+- `docs/lvlm_adm_observation_targets.md`
+- `docs/training_resume_conditions.md`
+- `docs/document_map.md`
 - `docs/final_submission_draft.md`
 - `docs/experiment_progress.md`
 - `docs/method_result_comparison.md`

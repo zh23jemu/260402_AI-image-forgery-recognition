@@ -20,8 +20,14 @@ generator_type:
 ground_truth:
 case_type:
 
+official_fsd_prediction:
+official_fsd_score:
 fsd_prediction:
 fsd_score:
+fsd_finetune_v1_prediction:
+fsd_finetune_v1_score:
+fsd_finetune_v2_prediction:
+fsd_finetune_v2_score:
 stay_positive_prediction:
 stay_positive_score:
 
@@ -47,10 +53,10 @@ human_takeaway:
 
 如果想用表格快速总览，可以用下面这个版本：
 
-| sample_id | generator_type | case_type | fsd_prediction | fsd_score | stay_positive_prediction | stay_positive_score | prompt_type | final_judgement | paper_ready_summary | human_takeaway |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| sample_001 | ADM | fsd_misclassified | real | 待填写 | fake | 待填写 | base | 待填写 | 待填写 | 待填写 |
-| sample_002 | Midjourney | model_conflict | fake | 待填写 | real | 待填写 | conflict | 待填写 | 待填写 | 待填写 |
+| sample_id | generator_type | case_type | official_fsd_prediction | official_fsd_score | fsd_finetune_v1_prediction | fsd_finetune_v1_score | fsd_finetune_v2_prediction | fsd_finetune_v2_score | stay_positive_prediction | stay_positive_score | prompt_type | final_judgement | paper_ready_summary | human_takeaway |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| sample_001 | ADM | fsd_misclassified | real | 待填写 | fake | 待填写 | real | 待填写 | fake | 待填写 | base | 待填写 | 待填写 | 待填写 |
+| sample_002 | ADM | model_conflict | fake | 待填写 | fake | 待填写 | fake | 待填写 | real | 待填写 | conflict | 待填写 | 待填写 | 待填写 |
 
 ## 4. 推荐整理方式
 
@@ -59,6 +65,7 @@ human_takeaway:
 - 原始提示词
 - `LVLM` 输出摘要
 - 论文可直接使用的总结句
+- 以及官方基线、首轮微调、第二轮微调之间的结论差异
 
 不建议直接把长篇原始回答原封不动塞进论文。
 

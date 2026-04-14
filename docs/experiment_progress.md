@@ -1,81 +1,91 @@
-# FSD 实验进展记录
+# 实验进展记录
 
-## 2026-04-05
+## 1. 当前完成状态
 
-### Midjourney 评估
+截至目前，项目实验已经形成三条并行但口径统一的工作线：
 
-- 模型：FSD
-- 测试类别：`Midjourney`
-- 使用权重：`checkpoints/fsd/resnet50_exclude_midjourney_step[200000]_converted.pth`
-- 数据目录：`data/GenImage`
-- 运行环境：Slurm 单卡 `Tesla V100-PCIE-32GB`
-- 评估样本数：`9000`
-- Accuracy：`0.7955555319786072`
-- Average Precision：`0.8203965425491333`
-- 说明：已完成 FSD 在 `Midjourney` 数据上的首次有效评估，说明当前代码、数据、权重和服务器环境已经联通。
+- `FSD` 六类生成器正式基线评估
+- `Stay-Positive` 两类正式评估与 `ADM` 扩展观察
+- `FSD / ADM` 三组训练探索结果
 
-### SD 评估
+## 2. FSD 正式基线结果
 
-- 模型：FSD
-- 测试类别：`SD`
-- 使用权重：`checkpoints/fsd/resnet50_exclude_sd_step[200000]_converted.pth`
-- 数据目录：`data/GenImage`
-- 运行环境：Slurm 单卡 `Tesla V100-PCIE-32GB`
-- 评估样本数：`9000`
-- Accuracy：`0.8834444284439087`
-- Average Precision：`0.913029670715332`
-- 说明：已完成 FSD 在 `SD` 数据上的第二条基线评估，结果优于 `Midjourney`，表明不同生成器类别上的检测难度存在差异。
+| 日期阶段 | 方法 | 测试类别 | Accuracy | AP | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| 2026-04-05 起 | FSD | Midjourney | `79.56%` | `82.04%` | 已完成正式评估 |
+| 2026-04-05 起 | FSD | SD | `88.34%` | `91.30%` | 已完成正式评估 |
+| 2026-04-10 起 | FSD | ADM | `75.41%` | `79.34%` | 已完成正式评估 |
+| 2026-04-10 起 | FSD | BigGAN | `79.27%` | `82.40%` | 已完成正式评估 |
+| 2026-04-10 起 | FSD | GLIDE | `96.67%` | `96.82%` | 已完成正式评估 |
+| 2026-04-10 起 | FSD | VQDM | `75.47%` | `77.15%` | 已完成正式评估 |
 
-### 当前结论
+### 当前观察
 
-- FSD 基线已在 `Midjourney` 和 `SD` 两类数据上完成初步评估。
-- `SD` 上的检测表现明显优于 `Midjourney`。
-- 当前结果已经可以作为论文与周报中的“实验进展”与“基线复现结果”使用。
+- `GLIDE` 是当前最容易检测的类别
+- `SD` 处于第二层级
+- `ADM` 与 `VQDM` 是当前最难类别
+- 不同生成器间存在明显性能梯度，说明“跨生成器泛化”并非均匀成立
 
-### Stay-Positive / Midjourney 评估
+## 3. Stay-Positive 结果
 
-- 模型：Stay-Positive
-- 测试数据：`real/val/nature` vs `Midjourney/val/ai`
-- 使用权重：
-  - `checkpoints/stay_positive/corvi-staypos.pth`
-  - `checkpoints/stay_positive/rajan-staypos.pth`
-- 运行环境：Slurm 单卡 `Tesla V100-PCIE-32GB`
-- 评估方式：`create_csv.py -> main.py -> eval.py`
-- `corvi-plus`
-  - RACC：`0.9956666666666667`
-  - FACC：`0.9963333333333333`
-  - ACC：`0.996`
-  - AP：`0.9998131520389307`
-- `rajan-ours-plus`
-  - RACC：`0.9976666666666667`
-  - FACC：`0.9703333333333334`
-  - ACC：`0.984`
-  - AP：`0.9994048293285538`
-- 说明：Stay-Positive 预训练模型已完成 `Midjourney` 数据上的首次有效验证，整体指标显著高于当前 FSD 在同类数据上的结果，其中 `corvi-plus` 表现最好。
+### 正式结果
 
-### Stay-Positive / SD 评估
+| 方法 | 测试类别 | 模型 | Accuracy | AP |
+| --- | --- | --- | --- | --- |
+| Stay-Positive | Midjourney | Corvi+ | `99.60%` | `99.98%` |
+| Stay-Positive | Midjourney | Rajan/Ours+ | `98.40%` | `99.94%` |
+| Stay-Positive | SD | Corvi+ | `99.78%` | `100%` |
+| Stay-Positive | SD | Rajan/Ours+ | `99.88%` | `100%` |
 
-- 模型：Stay-Positive
-- 测试数据：`real/val/nature` vs `SD/val/ai`
-- 使用权重：
-  - `checkpoints/stay_positive/corvi-staypos.pth`
-  - `checkpoints/stay_positive/rajan-staypos.pth`
-- 运行环境：Slurm 单卡 `Tesla V100-PCIE-32GB`
-- 评估方式：`create_csv.py -> main.py -> eval.py`
-- `corvi-plus`
-  - RACC：`0.9956666666666667`
-  - FACC：`1.0`
-  - ACC：`0.9978333333333333`
-  - AP：`1.0`
-- `rajan-ours-plus`
-  - RACC：`0.9976666666666667`
-  - FACC：`1.0`
-  - ACC：`0.9988333333333334`
-  - AP：`1.0`
-- 说明：Stay-Positive 在 `SD` 数据上的两种预训练模型均取得接近满分的结果，其中 `rajan-ours-plus` 略优于 `corvi-plus`。
+### ADM 扩展观察
 
-### 下一步
+- `Rajan/Ours+`
+- `RACC=99.77%`
+- `FACC=4.73%`
+- `ACC=52.25%`
+- `AP=87.58%`
 
-- 将 `FSD` 与 `Stay-Positive` 在 `Midjourney`、`SD` 两类数据上的结果整理成统一对比表。
-- 分析为何 `Stay-Positive` 在当前数据设置下显著优于 FSD，并讨论数据设定与任务定义差异。
-- 继续准备后续方法整合与改进方案。
+### 当前观察
+
+- 在当前 real/fake 对照测试中，`Stay-Positive` 显著强于 `FSD`
+- 但 `ADM` 扩展观察说明其默认阈值并不稳定
+- 当前更适合将其理解为“高性能判别基线 + 校准现象观察来源”
+
+## 4. FSD / ADM 训练探索
+
+| 阶段 | 设置 | Midjourney | SD | GLIDE | VQDM | ADM |
+| --- | --- | --- | --- | --- | --- | --- |
+| 第一组 | 从零初始化训练 | `71.26% / 73.80%` | `75.73% / 78.73%` | `98.96% / 99.60%` | `84.14% / 89.77%` | `63.82% / 64.99%` |
+| 第二组 | 首轮基于官方 checkpoint 微调 | `81.77% / 86.05%` | `95.44% / 97.95%` | `99.97% / 99.99%` | `98.03% / 99.20%` | `75.28% / 78.54%` |
+| 第三组 | 第二轮保守微调 | `85.49% / 90.08%` | `96.03% / 98.28%` | `99.96% / 99.99%` | `97.82% / 99.23%` | `74.13% / 76.89%` |
+
+### 当前训练结论
+
+- 从零初始化训练的主要意义在于打通训练链路
+- 首轮微调是当前最佳训练探索结果
+- 第二轮保守微调未进一步改善 `ADM`
+- 当前不建议继续默认追加第三轮训练，而应优先做结果分析与 `LVLM` 案例补充
+
+## 5. LVLM 当前状态
+
+当前 `LVLM` 已完成：
+
+- 论文结构纳入
+- 集成说明
+- 案例分析方案
+- 提示词模板
+- 候选样本模板
+- 案例记录模板
+- `ADM` 专用样本筛选清单
+
+当前仍待执行：
+
+- 首批 `ADM` 误判/边界样本筛选
+- `LVLM` 小样本定性分析
+- 将案例结果补入论文讨论段落
+
+## 6. 当前下一步
+
+1. 以首轮微调为当前最优训练探索结果收束论文表述
+2. 围绕 `ADM` 启动 `LVLM` 小样本案例分析
+3. 仅在论文确有收益时，再考虑是否补充第三轮极小改动训练

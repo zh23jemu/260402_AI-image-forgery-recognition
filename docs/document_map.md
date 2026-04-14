@@ -1,0 +1,56 @@
+# 文档索引
+
+## 1. 论文主线文档
+
+- [full_paper_draft.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/full_paper_draft.md)：当前论文主稿
+- [experiment_results_summary.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/experiment_results_summary.md)：统一结果总表
+- [method_result_comparison.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/method_result_comparison.md)：方法与结果对比总览
+- [paper_experiment_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/paper_experiment_text.md)：论文/周报可直接引用的实验表述
+- [submission_ready_outline.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/submission_ready_outline.md)：章节与提交结构说明
+
+## 2. 对外汇报文档
+
+- [final_submission_draft.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/final_submission_draft.md)：提交稿/汇报版摘要
+- [experiment_progress.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/experiment_progress.md)：实验进展总览
+- [weekly_report_experiment_update.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/weekly_report_experiment_update.md)：周报实验更新文本
+- [../weekly_report/20260414.md](/C:/Coding/260402_AI-image-forgery-recognition/weekly_report/20260414.md)：本周周报
+
+## 3. 训练与计划文档
+
+- [project_schedule_to_20260425.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/project_schedule_to_20260425.md)：总计划
+- [next_steps.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/next_steps.md)：当前默认下一步
+- [next_stage_training_plan.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/next_stage_training_plan.md)：训练线当前判断
+- [fsd_finetune_plan.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/fsd_finetune_plan.md)：ADM 微调结果与结论
+- [training_ready_checklist.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/training_ready_checklist.md)：训练前检查项
+- [training_resume_conditions.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/training_resume_conditions.md)：何时才值得重启训练
+- [adm_sample_export_minimum.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_sample_export_minimum.md)：样本级结果最小导出要求
+
+## 4. LVLM 总体方案文档
+
+- [lvlm_integration_notes.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_integration_notes.md)：LVLM 集成说明
+- [lvlm_case_analysis_plan.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_case_analysis_plan.md)：LVLM 案例分析方案
+- [lvlm_prompt_templates.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_prompt_templates.md)：提示词模板
+- [lvlm_paper_paragraph_skeleton.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_paper_paragraph_skeleton.md)：论文段落骨架
+
+## 5. ADM + LVLM 执行文档
+
+- [lvlm_adm_case_screening_sheet.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_screening_sheet.md)：ADM 候选样本筛选页
+- [lvlm_adm_collection_instructions.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_collection_instructions.md)：ADM 样本收集说明
+- [lvlm_adm_batch1_assignment.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_batch1_assignment.md)：首批案例分配表
+- [lvlm_adm_case_batch1_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_batch1_template.md)：首批案例记录页
+- [lvlm_adm_fill_order.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_fill_order.md)：填写顺序说明
+- [lvlm_adm_observation_targets.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_observation_targets.md)：观察目标
+- [lvlm_adm_paper_insert.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_paper_insert.md)：论文插入段落
+- [lvlm_execution_checklist.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_execution_checklist.md)：执行清单
+- [lvlm_candidate_sample_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_candidate_sample_template.md)：候选样本总模板
+- [lvlm_case_record_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_case_record_template.md)：案例记录总模板
+
+## 6. 当前建议
+
+如果只想抓最关键的入口，建议优先看：
+
+1. [full_paper_draft.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/full_paper_draft.md)
+2. [experiment_results_summary.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/experiment_results_summary.md)
+3. [next_steps.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/next_steps.md)
+4. [lvlm_adm_case_screening_sheet.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_screening_sheet.md)
+5. [lvlm_adm_case_batch1_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_batch1_template.md)
