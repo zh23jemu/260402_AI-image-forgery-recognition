@@ -24,6 +24,7 @@
 - [training_ready_checklist.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/training_ready_checklist.md)：训练前检查项
 - [training_resume_conditions.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/training_resume_conditions.md)：何时才值得重启训练
 - [adm_sample_export_minimum.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_sample_export_minimum.md)：样本级结果最小导出要求
+- [adm_sample_export_runbook.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_sample_export_runbook.md)：样本级结果导出运行说明
 
 ## 4. LVLM 总体方案文档
 
@@ -38,10 +39,12 @@
 - [lvlm_adm_collection_instructions.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_collection_instructions.md)：ADM 样本收集说明
 - [lvlm_adm_batch1_assignment.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_batch1_assignment.md)：首批案例分配表
 - [lvlm_adm_case_batch1_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_batch1_template.md)：首批案例记录页
+- [lvlm_adm_case_working_candidates.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_working_candidates.md)：已拿到的真实候选样本工作记录
 - [lvlm_adm_fill_order.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_fill_order.md)：填写顺序说明
 - [lvlm_adm_observation_targets.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_observation_targets.md)：观察目标
 - [lvlm_adm_paper_insert.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_paper_insert.md)：论文插入段落
 - [lvlm_execution_checklist.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_execution_checklist.md)：执行清单
+- [adm_case_selection_runbook.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_case_selection_runbook.md)：案例筛选运行说明
 - [lvlm_candidate_sample_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_candidate_sample_template.md)：候选样本总模板
 - [lvlm_case_record_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_case_record_template.md)：案例记录总模板
 
