@@ -6,8 +6,8 @@
 
 因此，下一步不应再默认继续追加微调训练，而应先转入：
 
-- `ADM` 误判样本整理
-- `LVLM` 小样本案例分析
+- `ADM` 误判样本的数值与视觉联合分析
+- `Stay-Positive / ADM` 阈值与校准分析
 - 论文讨论与结论部分补强
 
 ## 2. 当前默认主线
@@ -25,11 +25,10 @@
 
 ## 3. 现在最应该做的事
 
-1. 先按 [lvlm_adm_case_screening_sheet.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_screening_sheet.md) 粗筛 `ADM` 候选样本
-2. 再按 [adm_sample_export_minimum.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_sample_export_minimum.md) 准备服务器侧样本级结果
-3. 再按 [lvlm_adm_batch1_assignment.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_batch1_assignment.md) 固定首批 `6` 个案例
-4. 然后按 [lvlm_adm_case_batch1_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_adm_case_batch1_template.md) 开始正式记录
-5. 最后把案例结论压缩进论文讨论部分
+1. 先基于 [adm_priority3_visual_review.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_priority3_visual_review.md) 固化首批 `3` 个真实案例观察
+2. 再补 `Stay-Positive / ADM` 的阈值与校准分析
+3. 然后把案例结论和校准结论压缩进论文讨论部分
+4. 最后再判断是否有必要进入下一步训练
 
 ## 4. 什么时候才值得进入下一步训练
 

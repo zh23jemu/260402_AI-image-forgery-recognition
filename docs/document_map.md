@@ -6,6 +6,8 @@
 - [experiment_results_summary.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/experiment_results_summary.md)：统一结果总表
 - [method_result_comparison.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/method_result_comparison.md)：方法与结果对比总览
 - [paper_experiment_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/paper_experiment_text.md)：论文/周报可直接引用的实验表述
+- [adm_priority3_visual_review.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_priority3_visual_review.md)：优先 3 个 ADM 案例的真实视觉观察
+- [adm_priority3_discussion_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_priority3_discussion_text.md)：优先 3 个 ADM 案例的现成讨论文本
 - [submission_ready_outline.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/submission_ready_outline.md)：章节与提交结构说明
 
 ## 2. 对外汇报文档
