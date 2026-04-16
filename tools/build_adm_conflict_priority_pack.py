@@ -13,7 +13,14 @@ def load_rows(path: str) -> List[Dict[str, str]]:
 
 
 def select_rows(rows: List[Dict[str, str]], top_k: int) -> List[Dict[str, str]]:
-    rows = sorted(rows, key=lambda row: float(row["priority_score"]), reverse=True)
+    def sort_key(row: Dict[str, str]) -> float:
+        if row.get("priority_score"):
+            return float(row["priority_score"])
+        if row.get("stay_positive_score"):
+            return float(row["stay_positive_score"])
+        return 0.0
+
+    rows = sorted(rows, key=sort_key, reverse=True)
     return rows[:top_k]
 
 
@@ -24,6 +31,8 @@ def enrich(rows: List[Dict[str, str]]) -> List[Dict[str, str]]:
         item["case_id"] = f"adm_conflict_priority_{idx:02d}"
         item["case_reason"] = "Stay-Positive 校准后稳定判 fake，但 FSD official / v1 / v2 全部判 real，适合做方法互补性案例。"
         item["prompt_type"] = "conflict"
+        if not item.get("priority_score"):
+            item["priority_score"] = item.get("stay_positive_score", "0")
         enriched.append(item)
     return enriched
 

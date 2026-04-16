@@ -8,6 +8,15 @@
 - [paper_experiment_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/paper_experiment_text.md)：论文/周报可直接引用的实验表述
 - [adm_priority3_visual_review.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_priority3_visual_review.md)：优先 3 个 ADM 案例的真实视觉观察
 - [adm_priority3_discussion_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_priority3_discussion_text.md)：优先 3 个 ADM 案例的现成讨论文本
+- [adm_conflict_priority5_result.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_conflict_priority5_result.md)：第二批 5 个强冲突案例的真实视觉观察
+- [adm_conflict_priority5_discussion_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_conflict_priority5_discussion_text.md)：第二批 5 个强冲突案例的现成讨论文本
+- [adm_postcalibration_conflicts.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_postcalibration_conflicts.md)：校准后冲突样本总览
+- [adm_conflict_pattern_summary.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_conflict_pattern_summary.md)：冲突模式结构化统计摘要
+- [adm_conflict_pattern_analysis_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_conflict_pattern_analysis_text.md)：可直接写入论文的冲突模式分析文本
+- [adm_core_conflict_pool.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_pool.md)：核心互补样本池摘要
+- [adm_core_conflict_pool_sync.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_pool_sync.md)：核心互补样本池同步命令
+- [adm_core_conflict_top12_execution.generated.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_top12_execution.generated.md)：核心互补 Top12 执行包
+- [adm_core_conflict_top12_result.generated.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_top12_result.generated.md)：核心互补 Top12 结果页
 - [submission_ready_outline.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/submission_ready_outline.md)：章节与提交结构说明
 
 ## 2. 对外汇报文档
@@ -50,7 +59,16 @@
 - [lvlm_candidate_sample_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_candidate_sample_template.md)：候选样本总模板
 - [lvlm_case_record_template.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/lvlm_case_record_template.md)：案例记录总模板
 
-## 6. 当前建议
+## 6. 当前代码入口
+
+- [tools/build_adm_sample_export.py](/C:/Coding/260402_AI-image-forgery-recognition/tools/build_adm_sample_export.py)：构建统一样本级导出
+- [tools/select_adm_postcalibration_conflicts.py](/C:/Coding/260402_AI-image-forgery-recognition/tools/select_adm_postcalibration_conflicts.py)：筛选校准后冲突样本
+- [tools/select_adm_conflict_batch.py](/C:/Coding/260402_AI-image-forgery-recognition/tools/select_adm_conflict_batch.py)：抽取下一批冲突案例
+- [tools/build_adm_conflict_priority_pack.py](/C:/Coding/260402_AI-image-forgery-recognition/tools/build_adm_conflict_priority_pack.py)：生成案例执行包
+- [tools/summarize_adm_conflict_patterns.py](/C:/Coding/260402_AI-image-forgery-recognition/tools/summarize_adm_conflict_patterns.py)：统计冲突模式、模板分布与分数区间
+- [tools/build_adm_core_conflict_pool.py](/C:/Coding/260402_AI-image-forgery-recognition/tools/build_adm_core_conflict_pool.py)：从核心互补模式中均衡抽样代表样本池
+
+## 7. 当前建议
 
 如果只想抓最关键的入口，建议优先看：
 
