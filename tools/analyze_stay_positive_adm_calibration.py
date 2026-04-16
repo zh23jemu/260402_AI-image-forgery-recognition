@@ -24,14 +24,19 @@ def load_scores(path: str, model_name: str) -> Dict[str, float]:
         return {row["filename"]: sigmoid(float(row[model_name])) for row in reader}
 
 
-def merge_rows(real_labels: Dict[str, str], fake_labels: Dict[str, str], scores: Dict[str, float]) -> List[Dict[str, float]]:
+def merge_rows(
+    real_labels: Dict[str, str],
+    fake_labels: Dict[str, str],
+    real_scores: Dict[str, float],
+    fake_scores: Dict[str, float],
+) -> List[Dict[str, float]]:
     rows: List[Dict[str, float]] = []
     for filename, label in real_labels.items():
-        if filename in scores:
-            rows.append({"filename": filename, "label": 0, "score": scores[filename]})
+        if filename in real_scores:
+            rows.append({"filename": filename, "label": 0, "score": real_scores[filename]})
     for filename, label in fake_labels.items():
-        if filename in scores:
-            rows.append({"filename": filename, "label": 1, "score": scores[filename]})
+        if filename in fake_scores:
+            rows.append({"filename": filename, "label": 1, "score": fake_scores[filename]})
     return rows
 
 
@@ -102,15 +107,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze Stay-Positive ADM calibration.")
     parser.add_argument("--real_csv", required=True)
     parser.add_argument("--fake_csv", required=True)
-    parser.add_argument("--scores_csv", required=True)
+    parser.add_argument("--real_scores_csv", required=True)
+    parser.add_argument("--fake_scores_csv", required=True)
     parser.add_argument("--model_name", default="rajan-ours-plus")
     parser.add_argument("--output_md", required=True)
     args = parser.parse_args()
 
     real_labels = load_labels(args.real_csv)
     fake_labels = load_labels(args.fake_csv)
-    scores = load_scores(args.scores_csv, args.model_name)
-    rows = merge_rows(real_labels, fake_labels, scores)
+    real_scores = load_scores(args.real_scores_csv, args.model_name)
+    fake_scores = load_scores(args.fake_scores_csv, args.model_name)
+    rows = merge_rows(real_labels, fake_labels, real_scores, fake_scores)
 
     default_metrics = calc_metrics(rows, 0.5)
     best_metrics = find_best_threshold(rows)
