@@ -17,6 +17,7 @@
 - [adm_core_conflict_pool_sync.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_pool_sync.md)：核心互补样本池同步命令
 - [adm_core_conflict_top12_execution.generated.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_top12_execution.generated.md)：核心互补 Top12 执行包
 - [adm_core_conflict_top12_result.generated.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_top12_result.generated.md)：核心互补 Top12 结果页
+- [adm_core_conflict_top12_discussion_text.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/adm_core_conflict_top12_discussion_text.md)：核心互补 Top12 讨论文本
 - [submission_ready_outline.md](/C:/Coding/260402_AI-image-forgery-recognition/docs/submission_ready_outline.md)：章节与提交结构说明
 
 ## 2. 对外汇报文档
