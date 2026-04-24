@@ -16,6 +16,10 @@ outputs/
 runs/
 logs/
 wandb/
+analysis/template_preview_pages/
+analysis/paper_preview_pages/
+analysis/paper_preview.pdf
+analysis/paper_generation_report.json
 
 .DS_Store
 Thumbs.db
