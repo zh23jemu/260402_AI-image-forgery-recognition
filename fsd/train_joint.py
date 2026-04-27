@@ -211,10 +211,15 @@ def main():
     logger.info(f"Train generators: {train_generators}")
     logger.info(f"Eval generators: {eval_generators}")
     logger.info(f"Metadata CSV: {args.metadata_csv if args.metadata_csv else 'None'}")
+    logger.info(f"SP loss weight: {args.sp_loss_weight}")
+    logger.info(f"SP loss type: {args.sp_loss_type}")
+    logger.info(f"Force real in task: {args.force_real_in_task}")
 
     metadata_index = JointMetadataIndex(args.metadata_csv) if args.metadata_csv else None
     if metadata_index is not None:
         logger.info(f"Loaded joint metadata rows: {metadata_index.row_count}")
+    else:
+        logger.info("Joint metadata is disabled for this run.")
 
     train_iters = {
         folder: setup_joint_infinity_train_dataloader(
@@ -260,6 +265,8 @@ def main():
     logger.info("Start joint training for %d steps.", args.total_training_steps)
     scaler = GradScaler(enabled=args.use_fp16)
     effective_step = 0
+    steps_with_valid_sp = 0
+    running_valid_sp_total = 0
 
     for step in range(1, args.total_training_steps + 1):
         model.train()
@@ -326,6 +333,10 @@ def main():
 
         total_loss = proto_loss + args.sp_loss_weight * sp_loss
 
+        if valid_sp_count > 0:
+            steps_with_valid_sp += 1
+        running_valid_sp_total += valid_sp_count
+
         logger.logkv_mean("proto_loss", proto_loss.item())
         logger.logkv_mean("sp_loss", sp_loss.item())
         logger.logkv_mean("total_loss", total_loss.item())
@@ -348,7 +359,23 @@ def main():
             logger.logkv("step", step)
             logger.logkv("effective_step", effective_step)
             logger.logkv("lr", scheduler.get_last_lr()[0] if scheduler is not None else args.lr)
+            logger.logkv("steps_with_valid_sp", steps_with_valid_sp)
+            logger.logkv(
+                "avg_valid_sp_samples_per_step",
+                running_valid_sp_total / max(step, 1),
+            )
             logger.dumpkvs()
+
+            logger.info(
+                "Joint debug step=%d proto_loss=%.6f sp_loss=%.6f total_loss=%.6f valid_sp_samples=%d steps_with_valid_sp=%d avg_valid_sp_samples_per_step=%.4f",
+                step,
+                proto_loss.item(),
+                sp_loss.item(),
+                total_loss.item(),
+                valid_sp_count,
+                steps_with_valid_sp,
+                running_valid_sp_total / max(step, 1),
+            )
 
         if step % args.save_interval == 0:
             logger.info("Save checkpoint at step: %d", step)
