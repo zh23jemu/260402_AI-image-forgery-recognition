@@ -158,6 +158,26 @@ grep -E "Evaluation on|Save checkpoint|sp_loss|total_loss|FAILED|Traceback|Error
 - `SD`
 - `Midjourney`
 
+但需要特别注意：
+
+- 当前这轮 `FSD + SP` 训练协议是闭集协议，因为训练集中已经包含 `ADM`
+- 所以它不能直接与历史 `exclude-ADM` 的官方泛化结果做严格同协议比较
+
+因此，建议立刻补一组同协议对照：
+
+- `FSD-only closed-set stage1`
+
+对应脚本：
+
+```bash
+sbatch run_fsd_joint_base_stage1.slurm
+```
+
+这样才能公平比较：
+
+- `FSD-only`
+- `FSD + SP`
+
 ## 11. 如果训练没有跑起来，优先排查什么
 
 优先检查：
