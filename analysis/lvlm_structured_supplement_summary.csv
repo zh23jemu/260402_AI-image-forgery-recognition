@@ -1,0 +1,11 @@
+summary_type,name,count
+primary_abnormality,局部结构连接异常,14
+primary_abnormality,伪文本/伪界面,4
+primary_abnormality,生物体局部真实性不足,2
+scene_group,复杂生活场景,1
+scene_group,生物体/自然场景,9
+scene_group,设备/伪界面,6
+scene_group,室内/建筑/结构场景,4
+round_name,priority3,3
+round_name,priority5,5
+round_name,top12,12
