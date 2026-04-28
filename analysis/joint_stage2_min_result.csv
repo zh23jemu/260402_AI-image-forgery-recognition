@@ -1,0 +1,7 @@
+generator,accuracy,average_precision,lvlm_f1
+ADM,0.948444,0.971442,0.150000
+SD,0.947556,0.974957,
+Midjourney,0.844000,0.876938,
+ADM,0.952222,0.974539,0.177778
+SD,0.953333,0.977189,
+Midjourney,0.869667,0.903803,
