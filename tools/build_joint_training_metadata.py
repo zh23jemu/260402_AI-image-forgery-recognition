@@ -4,21 +4,17 @@
 """
 构建三模型联合训练所需的统一元数据表。
 
-第一版目标不是一次性把所有监督都补齐，而是先生成一张可以被
-`FSD + Stay-Positive` 联合训练直接使用的 CSV。
-
-支持三类能力：
+当前版本的目标是把“第二阶段最小量化版”真正落成可训练输入：
 
 1. 扫描 `GenImage` 目录，生成基础样本表
-2. 合并可选的 `Stay-Positive` 分数 CSV
-3. 生成基础 `hard_weight`
+2. 合并可选的 `Stay-Positive` 分数与冲突信息
+3. 合并可选的 `LVLM` 结构化语义标签
+4. 生成适合联合训练的 `hard_weight`
 
-当前默认重点服务于：
+这样生成出的 CSV 可以直接服务于：
 
-- `real`
-- `ADM`
-- `SD`
-- `Midjourney`
+- 第一阶段 `FSD + SP`
+- 第二阶段最小量化版 `FSD + SP + LVLM labels`
 """
 
 from __future__ import annotations
@@ -27,6 +23,14 @@ import argparse
 import csv
 import os
 from pathlib import Path
+
+
+LVLM_FIELD_MAPPING = {
+    "伪文本/伪界面": "lvlm_has_text_artifact",
+    "局部结构连接异常": "lvlm_has_structure_error",
+    "生物体局部真实性不足": "lvlm_has_bio_detail_error",
+    "局部修补/过度平滑": "lvlm_has_patch_or_smooth",
+}
 
 
 def normalize_path(path: str) -> str:
@@ -113,6 +117,19 @@ def scan_split_rows(data_root: Path, generator: str, split: str) -> list[dict]:
     return rows
 
 
+def build_lookup_keys(image_path: str) -> list[str]:
+    """
+    为同一路径生成多种查找键。
+
+    这样可以兼容：
+    - 服务器绝对路径
+    - 本地绝对路径
+    - `data/GenImage/...` 后缀路径
+    """
+
+    return [normalize_path(image_path), suffix_key(image_path)]
+
+
 def load_score_records(csv_paths: list[str], score_column: str, prob_column: str) -> dict:
     """
     读取外部分数 CSV，并按路径建立索引。
@@ -180,6 +197,84 @@ def merge_score_records(rows: list[dict], score_mapping: dict, priority_fake_gen
             row["hard_weight"] = max(float(row["hard_weight"]), 2.0)
         elif row["generator"] in priority_fake_generators and row["label"] == 1:
             row["hard_weight"] = max(float(row["hard_weight"]), 1.8)
+
+
+def load_lvlm_records(csv_paths: list[str]) -> dict:
+    """
+    读取 `LVLM` 结构化案例 CSV。
+
+    当前输入默认对应：
+    - `analysis/lvlm_structured_supplement_cases.csv`
+
+    由于这是人工/结构化案例集，不是全量数据，因此只会匹配一小部分关键困难样本。
+    这正符合第二阶段“先做最小量化验证”的目标。
+    """
+
+    mapping = {}
+
+    for csv_path in csv_paths:
+        with open(csv_path, "r", encoding="utf-8", newline="") as file_obj:
+            reader = csv.DictReader(file_obj)
+            for row in reader:
+                image_path = row.get("image_path")
+                if not image_path:
+                    continue
+
+                record = {
+                    "subset_tag": row.get("case_type", row.get("selection_role", "adm_lvlm_case")),
+                    "lvlm_has_text_artifact": "0",
+                    "lvlm_has_layout_conflict": "0",
+                    "lvlm_has_structure_error": "0",
+                    "lvlm_has_bio_detail_error": "0",
+                    "lvlm_has_patch_or_smooth": "0",
+                    "lvlm_confidence": "0.85" if row.get("evidence_level") == "强" else "0.70",
+                }
+
+                primary = row.get("primary_abnormality", "").strip()
+                secondary = row.get("secondary_abnormality", "").strip()
+                scene_group = row.get("scene_group", "").strip()
+
+                for abnormality in [primary, secondary]:
+                    if abnormality in LVLM_FIELD_MAPPING:
+                        record[LVLM_FIELD_MAPPING[abnormality]] = "1"
+
+                # 设备/室内/复杂关系场景通常还伴随布局或关系异常，这里显式补一位。
+                if scene_group in {"设备/伪界面", "室内/建筑/结构场景", "复杂生活场景"}:
+                    record["lvlm_has_layout_conflict"] = "1"
+
+                for key in build_lookup_keys(image_path):
+                    mapping[key] = record
+
+    return mapping
+
+
+def merge_lvlm_records(rows: list[dict], lvlm_mapping: dict) -> None:
+    """
+    把 `LVLM` 结构化标签合并进基础元数据。
+
+    合并策略：
+    1. 只对匹配到的关键困难样本写入多标签
+    2. 同时提高 `hard_weight`
+    3. 保留已有 `subset_tag`，但优先让案例样本进入更明确的困难子集
+    """
+
+    for row in rows:
+        record = lvlm_mapping.get(row["path_key"]) or lvlm_mapping.get(row["suffix_key"])
+        if record is None:
+            continue
+
+        for field_name in [
+            "lvlm_has_text_artifact",
+            "lvlm_has_layout_conflict",
+            "lvlm_has_structure_error",
+            "lvlm_has_bio_detail_error",
+            "lvlm_has_patch_or_smooth",
+            "lvlm_confidence",
+        ]:
+            row[field_name] = record.get(field_name, row.get(field_name, ""))
+
+        row["subset_tag"] = f"lvlm_{record.get('subset_tag', 'case')}"
+        row["hard_weight"] = max(float(row["hard_weight"]), 2.5)
 
 
 def write_rows(output_csv: Path, rows: list[dict]) -> None:
@@ -264,6 +359,12 @@ def parse_args() -> argparse.Namespace:
         default="ADM",
         help="需要默认抬高 hard_weight 的困难类别列表。",
     )
+    parser.add_argument(
+        "--lvlm_cases_csv",
+        action="append",
+        default=[],
+        help="可重复传入多个 LVLM 结构化案例 CSV 路径。",
+    )
     return parser.parse_args()
 
 
@@ -290,10 +391,16 @@ def main() -> None:
         )
         merge_score_records(rows, score_mapping, priority_fake_generators)
 
+    lvlm_mapping = {}
+    if args.lvlm_cases_csv:
+        lvlm_mapping = load_lvlm_records(args.lvlm_cases_csv)
+        merge_lvlm_records(rows, lvlm_mapping)
+
     write_rows(output_csv, rows)
 
     print(f"Scanned rows: {len(rows)}")
     print(f"Loaded score entries: {len(score_mapping)}")
+    print(f"Loaded LVLM entries: {len(lvlm_mapping)}")
     print(f"Output CSV: {output_csv}")
 
 

@@ -22,4 +22,14 @@ mkdir -p analysis
   --generators real,ADM,SD,Midjourney \
   --splits train,val \
   --sp_score_csv analysis/adm_sample_export_enriched.csv \
+  --lvlm_cases_csv analysis/lvlm_structured_supplement_cases.csv \
+  --priority_fake_generators ADM
+
+./.venv/bin/python tools/build_joint_training_metadata.py \
+  --data_root data/GenImage \
+  --output_csv analysis/joint_training_metadata_stage2.csv \
+  --generators real,ADM,SD,Midjourney \
+  --splits train,val \
+  --sp_score_csv analysis/adm_sample_export_enriched.csv \
+  --lvlm_cases_csv analysis/lvlm_structured_supplement_cases.csv \
   --priority_fake_generators ADM

@@ -11,6 +11,15 @@ import torch
 import torch.distributed as dist
 
 
+LVLM_LABEL_FIELDS = [
+    "lvlm_has_text_artifact",
+    "lvlm_has_layout_conflict",
+    "lvlm_has_structure_error",
+    "lvlm_has_bio_detail_error",
+    "lvlm_has_patch_or_smooth",
+]
+
+
 def _normalize_path(path):
     """
     统一路径格式，尽量减少 Windows / Linux / 远端服务器之间的路径差异。
@@ -73,12 +82,15 @@ class JointMetadataIndex:
     """
     读取联合训练元数据 CSV，并提供样本路径到监督信息的查询能力。
 
-    当前第一版主要关心：
-    - `sp_score_raw`
-    - `sp_prob_calibrated`
-    - `hard_weight`
+    当前版本同时支持两类辅助监督：
 
-    但也保留更多字段，以便后续扩展 `LVLM` 辅助标签和冲突子集分析。
+    1. 第一阶段 `Stay-Positive` 概率监督
+    2. 第二阶段 `LVLM` 多标签语义监督
+
+    这样训练脚本可以在同一个 metadata 入口中完成：
+    - `SP` 约束
+    - `LVLM` 语义头训练
+    - `hard_weight` 难样本加权
     """
 
     def __init__(self, csv_path=""):
@@ -103,7 +115,6 @@ class JointMetadataIndex:
                 normalized = _normalize_path(image_path)
                 suffix = _suffix_key(image_path)
 
-                # 尽量兼容现有分析 CSV 的字段命名。
                 sp_score_raw = _to_float(
                     row.get("sp_score_raw", row.get("stay_positive_score", row.get("sp_score")))
                 )
@@ -117,6 +128,17 @@ class JointMetadataIndex:
                     )
                 )
                 hard_weight = _to_float(row.get("hard_weight"), default=1.0)
+                lvlm_confidence = _to_float(row.get("lvlm_confidence"), default=0.0)
+
+                lvlm_values = []
+                valid_label_count = 0
+                for field_name in LVLM_LABEL_FIELDS:
+                    label_value = _to_float(row.get(field_name), default=float("nan"))
+                    if math.isnan(label_value):
+                        lvlm_values.append(0.0)
+                    else:
+                        lvlm_values.append(float(label_value))
+                        valid_label_count += 1
 
                 parsed_row = {
                     "image_path": image_path,
@@ -128,6 +150,9 @@ class JointMetadataIndex:
                     "hard_weight": hard_weight if not math.isnan(hard_weight) else 1.0,
                     "subset_tag": row.get("subset_tag", ""),
                     "sp_conflict_flag": row.get("sp_conflict_flag", ""),
+                    "lvlm_labels": lvlm_values,
+                    "lvlm_valid": 1.0 if valid_label_count > 0 else 0.0,
+                    "lvlm_confidence": 0.0 if math.isnan(lvlm_confidence) else float(lvlm_confidence),
                 }
 
                 self.rows_by_exact[normalized] = parsed_row
@@ -161,24 +186,32 @@ class MetadataAwareImageFolder(ImageFolder):
     - sp_prob
     - sp_valid
     - hard_weight
+    - lvlm_labels
+    - lvlm_valid
+    - lvlm_confidence
 
-    这样可以在不破坏现有 FSD 主体流程的前提下，把 `Stay-Positive`
-    的离线监督接进训练入口。
+    这样可以在不破坏现有 FSD 主体流程的前提下，把第一阶段和第二阶段监督
+    统一接进训练入口。
     """
 
     def __init__(self, root, metadata_index=None, transform=None):
         super().__init__(root, transform=transform)
         self.metadata_index = metadata_index
         self.metadata_match_count = 0
+        self.lvlm_match_count = 0
 
         if self.metadata_index is not None:
             for path, _ in self.samples:
-                if self.metadata_index.lookup(path) is not None:
+                record = self.metadata_index.lookup(path)
+                if record is not None:
                     self.metadata_match_count += 1
+                    if float(record.get("lvlm_valid", 0.0)) > 0.5:
+                        self.lvlm_match_count += 1
 
             warnings.warn(
                 f"MetadataAwareImageFolder loaded {len(self.samples)} samples from {root}, "
-                f"metadata matched {self.metadata_match_count} samples."
+                f"metadata matched {self.metadata_match_count} samples, "
+                f"LVLM labels matched {self.lvlm_match_count} samples."
             )
 
     def __getitem__(self, index):
@@ -206,6 +239,15 @@ class MetadataAwareImageFolder(ImageFolder):
             sp_valid = 1.0
             hard_weight = float(record.get("hard_weight", 1.0))
 
+        if record is None:
+            lvlm_labels = [0.0 for _ in LVLM_LABEL_FIELDS]
+            lvlm_valid = 0.0
+            lvlm_confidence = 0.0
+        else:
+            lvlm_labels = list(record.get("lvlm_labels", [0.0 for _ in LVLM_LABEL_FIELDS]))
+            lvlm_valid = float(record.get("lvlm_valid", 0.0))
+            lvlm_confidence = float(record.get("lvlm_confidence", 0.0))
+
         return (
             sample,
             target,
@@ -213,6 +255,9 @@ class MetadataAwareImageFolder(ImageFolder):
             torch.tensor(sp_prob, dtype=torch.float32),
             torch.tensor(sp_valid, dtype=torch.float32),
             torch.tensor(hard_weight, dtype=torch.float32),
+            torch.tensor(lvlm_labels, dtype=torch.float32),
+            torch.tensor(lvlm_valid, dtype=torch.float32),
+            torch.tensor(lvlm_confidence, dtype=torch.float32),
         )
 
 
