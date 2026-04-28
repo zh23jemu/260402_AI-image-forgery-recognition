@@ -308,3 +308,42 @@ def setup_joint_infinity_train_dataloader(
             sampler.set_epoch(epoch)
         epoch += 1
         yield from loader
+
+
+def setup_joint_val_dataloader(
+    folder_path,
+    metadata_index=None,
+    batch_size=20,
+    num_workers=16,
+    pin_memory=True,
+    drop_last=True,
+):
+    """
+    构建带联合监督信息的验证 dataloader。
+
+    第二阶段需要在评估阶段读取 `LVLM` 标签来计算辅助头 F1，因此验证集也要
+    使用 metadata-aware dataset。主任务评估仍然只读取 batch[0] 图像，
+    不会影响原有 Accuracy / AP 计算。
+    """
+
+    transform = transforms.Compose(
+        [
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+        ]
+    )
+
+    dataset = MetadataAwareImageFolder(
+        folder_path,
+        metadata_index=metadata_index,
+        transform=transform,
+    )
+
+    return DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        drop_last=drop_last,
+    )

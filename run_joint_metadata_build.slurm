@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:0
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH -t 02:00:00
+#SBATCH -t 01:00:00
 #SBATCH -o logs/joint_meta_%j.out
 #SBATCH -e logs/joint_meta_%j.err
 
@@ -23,7 +23,9 @@ mkdir -p analysis
   --splits train,val \
   --sp_score_csv analysis/adm_sample_export_enriched.csv \
   --lvlm_cases_csv analysis/lvlm_structured_supplement_cases.csv \
-  --priority_fake_generators ADM
+  --priority_fake_generators ADM \
+  --max_files_per_generator_split 5000 \
+  --enable_adm_prompt_weak_lvlm
 
 ./.venv/bin/python tools/build_joint_training_metadata.py \
   --data_root data/GenImage \
@@ -32,4 +34,6 @@ mkdir -p analysis
   --splits train,val \
   --sp_score_csv analysis/adm_sample_export_enriched.csv \
   --lvlm_cases_csv analysis/lvlm_structured_supplement_cases.csv \
-  --priority_fake_generators ADM
+  --priority_fake_generators ADM \
+  --max_files_per_generator_split 5000 \
+  --enable_adm_prompt_weak_lvlm

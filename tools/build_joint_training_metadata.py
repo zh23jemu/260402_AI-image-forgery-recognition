@@ -67,7 +67,70 @@ def parse_list_arg(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
-def scan_split_rows(data_root: Path, generator: str, split: str) -> list[dict]:
+def infer_adm_prompt_weak_labels(image_path: str) -> dict:
+    """
+    根据 ADM 文件名模板生成第二阶段最小量化版的弱 LVLM 标签。
+
+    这不是人工逐图标注，而是基于现有 20 个结构化案例总结出的 prompt-level
+    弱监督。它的作用是让第二阶段辅助头能够在 `train` split 中获得非零监督，
+    从而完成“LVLM 结构化标签进入训练计算图”的最小量化验证。
+    """
+
+    name = Path(image_path).name.lower()
+    record = {
+        "lvlm_has_text_artifact": "0",
+        "lvlm_has_layout_conflict": "0",
+        "lvlm_has_structure_error": "1",
+        "lvlm_has_bio_detail_error": "0",
+        "lvlm_has_patch_or_smooth": "0",
+        "lvlm_confidence": "0.45",
+    }
+
+    if "_adm_174" in name:
+        record.update(
+            {
+                "lvlm_has_text_artifact": "1",
+                "lvlm_has_layout_conflict": "1",
+                "lvlm_has_structure_error": "1",
+                "lvlm_confidence": "0.55",
+            }
+        )
+    elif "_adm_153" in name:
+        record.update(
+            {
+                "lvlm_has_layout_conflict": "1",
+                "lvlm_has_structure_error": "1",
+                "lvlm_has_patch_or_smooth": "1",
+                "lvlm_confidence": "0.50",
+            }
+        )
+    elif "_adm_7" in name or "_adm_85" in name or "_adm_91" in name:
+        record.update(
+            {
+                "lvlm_has_structure_error": "1",
+                "lvlm_has_bio_detail_error": "1",
+                "lvlm_confidence": "0.50",
+            }
+        )
+    elif "_adm_34" in name:
+        record.update(
+            {
+                "lvlm_has_structure_error": "1",
+                "lvlm_has_patch_or_smooth": "1",
+                "lvlm_confidence": "0.48",
+            }
+        )
+
+    return record
+
+
+def scan_split_rows(
+    data_root: Path,
+    generator: str,
+    split: str,
+    max_files: int = 0,
+    enable_adm_prompt_weak_lvlm: bool = False,
+) -> list[dict]:
     """
     扫描单个生成器 / 单个 split 的样本。
 
@@ -84,15 +147,19 @@ def scan_split_rows(data_root: Path, generator: str, split: str) -> list[dict]:
     if not leaf_dir.exists():
         return rows
 
-    for image_path in sorted(leaf_dir.rglob("*")):
-        if not image_path.is_file():
-            continue
+    scanned = 0
+    for current_root, _, filenames in os.walk(leaf_dir):
+        for filename in filenames:
+            image_path = Path(current_root) / filename
+            if not image_path.is_file():
+                continue
 
-        rows.append(
-            {
-                "image_path": str(image_path.resolve()),
-                "path_key": normalize_path(str(image_path.resolve())),
-                "suffix_key": suffix_key(str(image_path.resolve())),
+            image_path_str = str(image_path)
+
+            row = {
+                "image_path": image_path_str,
+                "path_key": normalize_path(image_path_str),
+                "suffix_key": suffix_key(image_path_str),
                 "split": split,
                 "generator": generator,
                 "label": label,
@@ -112,7 +179,17 @@ def scan_split_rows(data_root: Path, generator: str, split: str) -> list[dict]:
                 "lvlm_confidence": "",
                 "hard_weight": 1.0 if generator == "real" else 1.5,
             }
-        )
+
+            if enable_adm_prompt_weak_lvlm and generator == "ADM" and split == "train":
+                row.update(infer_adm_prompt_weak_labels(image_path_str))
+                row["subset_tag"] = "adm_prompt_weak_lvlm"
+                row["hard_weight"] = max(float(row["hard_weight"]), 2.2)
+
+            rows.append(row)
+            scanned += 1
+
+            if max_files > 0 and scanned >= max_files:
+                return rows
 
     return rows
 
@@ -365,6 +442,17 @@ def parse_args() -> argparse.Namespace:
         default=[],
         help="可重复传入多个 LVLM 结构化案例 CSV 路径。",
     )
+    parser.add_argument(
+        "--max_files_per_generator_split",
+        type=int,
+        default=0,
+        help="每个 generator/split 最多扫描多少文件；0 表示不限制。",
+    )
+    parser.add_argument(
+        "--enable_adm_prompt_weak_lvlm",
+        action="store_true",
+        help="是否为 ADM/train 根据文件名模板生成弱 LVLM 标签。",
+    )
     return parser.parse_args()
 
 
@@ -380,7 +468,15 @@ def main() -> None:
     rows = []
     for generator in generators:
         for split in splits:
-            rows.extend(scan_split_rows(data_root, generator, split))
+            split_rows = scan_split_rows(
+                data_root,
+                generator,
+                split,
+                max_files=args.max_files_per_generator_split,
+                enable_adm_prompt_weak_lvlm=args.enable_adm_prompt_weak_lvlm,
+            )
+            rows.extend(split_rows)
+            print(f"Scanned {len(split_rows)} rows for {generator}/{split}", flush=True)
 
     score_mapping = {}
     if args.sp_score_csv:

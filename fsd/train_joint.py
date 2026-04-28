@@ -23,8 +23,12 @@ from torchmetrics.classification import Accuracy, AveragePrecision, MultilabelF1
 from tqdm import tqdm
 import timm
 
-from datasets import setup_val_dataloader
-from datasets.joint_metadata import LVLM_LABEL_FIELDS, JointMetadataIndex, setup_joint_infinity_train_dataloader
+from datasets.joint_metadata import (
+    LVLM_LABEL_FIELDS,
+    JointMetadataIndex,
+    setup_joint_infinity_train_dataloader,
+    setup_joint_val_dataloader,
+)
 from model.prototypical_utils import compute_prototypical_loss
 from util.parser import TrainParser
 from util.utils import load_model, save_model, setup_dist
@@ -415,8 +419,9 @@ def main():
     }
 
     val_dataloaders = {
-        folder: setup_val_dataloader(
+        folder: setup_joint_val_dataloader(
             folder_path=os.path.join(args.data_root, folder, "val"),
+            metadata_index=metadata_index,
             batch_size=args.num_support_val + args.num_query_val,
             num_workers=args.num_workers,
         )
