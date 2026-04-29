@@ -18,8 +18,14 @@ logs/
 wandb/
 analysis/template_preview_pages/
 analysis/paper_preview_pages/
+analysis/final_docx_render*/
 analysis/paper_preview.pdf
 analysis/paper_generation_report.json
+docs/*回填前备份.docx
+figures/table_5_1_fsd_results.png
+figures/table_5_2_stay_positive_results.png
+figures/table_5_3_fsd_training_exploration.png
+figures/table_5_4_joint_training_results.png
 
 .DS_Store
 Thumbs.db
