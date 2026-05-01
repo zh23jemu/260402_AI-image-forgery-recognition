@@ -19,6 +19,7 @@ wandb/
 analysis/template_preview_pages/
 analysis/paper_preview_pages/
 analysis/final_docx_render*/
+analysis/rewrite2_0429_render*/
 analysis/paper_preview.pdf
 analysis/paper_generation_report.json
 docs/*回填前备份.docx
